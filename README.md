@@ -35,7 +35,7 @@ end
 app/models/job.rb
 
 <pre>
-class Job
+class Job < ActiveRecord::Base
   has_many  :job_subjects, :order => :subject_id,
             :builder => :subjects, :builder_include => :subject
   has_many  :subjects, :through => :job_subjects, :order => :subject_id
