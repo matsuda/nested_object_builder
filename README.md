@@ -3,7 +3,7 @@ NestedObjectBuilder
 
 ## インストール
 
-  ruby script/plugin install git://github.com/matsuda/trail_stamp.git
+  ruby script/plugin install git://github.com/matsuda/nested_object_builder.git
 
 ## 使い方
 
