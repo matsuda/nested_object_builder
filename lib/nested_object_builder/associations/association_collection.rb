@@ -12,11 +12,26 @@ module NestedObjectBuilder
       end
 
       module InstanceMethods
+        def builds_prepare(attributes = {}, &block)
+          if count = @reflection.options[:builder_count]
+            # returning records = [] do
+            #   (size..count-1).step {|i| records << build(attributes, &block)}
+            # end
+          elsif builder = @reflection.options[:builder]
+            model       = builder.to_s.singularize.camelize.constantize
+            foreign_key = model.to_s.foreign_key.to_sym
+            if association = @reflection.options[:builder_include]
+              preload_associations(self, association)
+            end
+            load_target
+          end
+        end
+
         def builds(attributes = {}, &block)
           if count = @reflection.options[:builder_count]
-            returning records = [] do
-              (size..count-1).step {|i| records << build(attributes, &block)}
-            end
+            # returning records = [] do
+            #   (size..count-1).step {|i| records << build(attributes, &block)}
+            # end
           elsif builder = @reflection.options[:builder]
             model       = builder.to_s.singularize.camelize.constantize
             foreign_key = model.to_s.foreign_key.to_sym
@@ -34,10 +49,13 @@ module NestedObjectBuilder
         end
 
         def builder_expectants(attributes = {}, &block)
-          if builder = @reflection.options[:builder]
+          if count = @reflection.options[:builder_count]
+            # returning records = [] do
+            #   (size..count-1).step {|i| records << build(attributes, &block)}
+            # end
+          elsif builder = @reflection.options[:builder]
             model       = builder.to_s.singularize.camelize.constantize
             foreign_key = model.to_s.foreign_key.to_sym
-            # reject{ |association| !association._nested_checked }
             if association = @reflection.options[:builder_include]
               preload_associations(self, association)
             end

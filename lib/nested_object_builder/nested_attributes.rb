@@ -67,6 +67,8 @@ module NestedObjectBuilder
 
         association = send(association_name)
 
+        association.builds_prepare
+
         existing_records = if association.loaded?
           association.to_a
         else
