@@ -1,6 +1,6 @@
 module ActiveRecord
   module Associations # :nodoc:
-    HAS_MANY_BUILDER_ASSOCIATION_KEYS = [:builder_count, :builder, :builder_include]
+    HAS_MANY_BUILDER_ASSOCIATION_KEYS = [:builder_count, :builder, :builder_include, :builder_order]
 
     def self.included(base)
       base.extend(ClassMethods)

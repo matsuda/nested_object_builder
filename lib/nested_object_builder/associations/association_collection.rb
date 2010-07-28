@@ -38,9 +38,15 @@ module NestedObjectBuilder
             model.all.each do |m|
               build( foreign_key => m.id ) unless map(&foreign_key).include?(m.id)
             end
-            sort!{ |a, b| a.send(foreign_key) <=> b.send(foreign_key) }
             if association = @reflection.options[:builder_include]
               preload_associations(self, association)
+            end
+            sort_key = @reflection.options[:builder_order] || foreign_key
+            case sort_key
+            when Symbol
+              sort!{ |a, b| a.send(sort_key) <=> b.send(sort_key) }
+            when Proc
+              sort!{ |a, b| sort_key.call(a) <=> sort_key.call(b) }
             end
             load_target
           else
@@ -59,7 +65,13 @@ module NestedObjectBuilder
             if association = @reflection.options[:builder_include]
               preload_associations(self, association)
             end
-            sort!{ |a, b| a.send(foreign_key) <=> b.send(foreign_key) }
+            sort_key = @reflection.options[:builder_order] || foreign_key
+            case sort_key
+            when Symbol
+              sort!{ |a, b| a.send(sort_key) <=> b.send(sort_key) }
+            when Proc
+              sort!{ |a, b| sort_key.call(a) <=> sort_key.call(b) }
+            end
             # load_target
             reject{ |association| !association._nested_checked }
           else
