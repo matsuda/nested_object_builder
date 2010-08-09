@@ -35,12 +35,14 @@ module NestedObjectBuilder
           elsif builder = @reflection.options[:builder]
             model       = builder.to_s.singularize.camelize.constantize
             foreign_key = model.to_s.foreign_key.to_sym
-            model.all.each do |m|
-              build( foreign_key => m.id ) unless map(&foreign_key).include?(m.id)
+            builder_ids = model.all.map(&:id)
+            builder_ids.each do |builder_id|
+              build( foreign_key => builder_id ) unless map(&foreign_key).include?(builder_id)
             end
             if association = @reflection.options[:builder_include]
               preload_associations(self, association)
             end
+            reject!{ |bld| !builder_ids.include?(bld.send(foreign_key)) }
             sort_key = @reflection.options[:builder_order] || foreign_key
             case sort_key
             when Symbol
